@@ -1,1 +1,15 @@
+Topic:
+
+
+corpus:paragraph
+documents:sentence
+vocabulary:unique words
+
+Tokenization: Its the process to conver the paragraph into sentence or sentemce to unique words
+
+paragraph --> sentence, so sentence is the token
+
+sentence --> words, so words is the token
+
+
 
