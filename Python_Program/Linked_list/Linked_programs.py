@@ -30,4 +30,37 @@ def insert_begin(head,data):
 	return new_node
 
 
+
+
 ## insert at end
+
+
+head = n1
+
+
+def print_list(head):
+	curr = head
+	while curr:
+		print(curr.data, end="-->")
+		curr = curr.next
+	print(None)
+
+
+data = 200
+head = n1
+
+
+def insert_end(head, data):
+	new_node = node(data)
+	if not head:
+		return new_node
+	curr = head
+
+	while curr.next:
+		curr = curr.next
+	curr.next = new_node
+	return head
+
+
+head = h1
+print_list(head)
