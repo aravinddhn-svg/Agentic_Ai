@@ -261,14 +261,26 @@ w11=Window.partitionBy("user_id").orderBy("ts1")
 df5=df4.withColumn("nw_s",sum("sess").over(w11))
 df6 = df5.groupBy("user_id","nw_s").agg(max("ts").alias("mx"),min("ts").alias("mn")).withColumn("diffpersess",((to_unix_timestamp("mx")-to_unix_timestamp("mn"))/60).cast("int"))
 
-df7= df6.groupBy("user_id","nw_s").agg(avg("diffpersess").alias("avg_s").cast("int"))
+
+###correct one need to calculate the average duration per user.
+    df_avg = df_session.groupBy("user_id") \
+    .agg(
+        avg("session_duration_min").cast("int").alias("avg_session_duration")
+    )
+
+
+##df7= df6.groupBy("user_id","nw_s").agg(avg("diffpersess").alias("avg_s").cast("int"))
 
 
 
 
 problem 2:
 
+from pyspark.sql.functions import *
+from pyspark.sql.types import *
+from pyspark.sql import Window
 
+Need to flag if the user make more than 10 transaction in  24 hours. 
 
 data = [
     ("t1", "u1", 100, "2024-01-01 09:00:00"),
@@ -282,14 +294,27 @@ data = [
     ("t9", "u1", 500, "2024-01-01 17:00:00"),
     ("t10","u1",  40, "2024-01-01 18:00:00"),
     ("t11","u1",  30, "2024-01-01 18:01:00"),  # 11th trx inside 24h window → fraud
+    ("t12","u2",  30, "2024-01-01 18:01:00"), 
+    ("t12","u3",  30, "2024-01-01 18:01:00"),
+     ("t1",  "u4", 100, "2024-01-01 09:00:00"),
+    ("t2", "u4",  50, "2024-01-01 10:00:00"),
+    ("t3", "u4",  20, "2024-01-01 11:00:00"),
+    ("t4", "u4",  60, "2024-01-01 12:00:00"),
+    ("t5", "u4",  10, "2024-01-01 13:00:00"),
+    ("t6", "u4",  80, "2024-01-01 14:00:00"),
+    ("t7", "u4", 200, "2024-01-01 15:00:00"),
+    ("t8", "u4", 250, "2024-01-03 16:00:00"),
+    ("t9", "u4", 500, "2024-01-03 17:00:00"),
+    ("t10","u4",  40, "2024-01-05 18:00:00")    
+          
+          
 ]
 
 schema = "txn_id string, user_id string, amount int, timestamp string"
 txn = spark.createDataFrame(data, schema)
-txn = txn.withColumn("timestamp", to_timestamp("timestamp")).withColumn("unixts",unix_timestamp("timestamp"))
+txn = txn.withColumn("timestamp", to_timestamp("timestamp")).withColumn("ts",to_unix_timestamp("timestamp"))
 txn.show()
 
-xn.show()
 
 +------+-------+------+-------------------+----------+
 |txn_id|user_id|amount|          timestamp|    ts|
